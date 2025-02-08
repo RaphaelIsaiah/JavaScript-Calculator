@@ -1,4 +1,5 @@
 import CalculatorBtns from "./CalculatorBtns";
+import Display from "./Display";
 import { buttonsPack } from "../utils/buttonsPack";
 
 const Calculator = () => {
@@ -6,9 +7,18 @@ const Calculator = () => {
 
   return (
     <div>
-      {btns.map((btn) => (
-        <CalculatorBtns key={btn.id} keyTrigger={btn.keyTrigger} id={btn.id} />
-      ))}
+      <div>
+        <Display />
+      </div>
+      <div>
+        {btns.map((btn) => (
+          <CalculatorBtns
+            key={btn.id}
+            keyTrigger={btn.keyTrigger}
+            id={btn.id}
+          />
+        ))}
+      </div>
     </div>
   );
 };

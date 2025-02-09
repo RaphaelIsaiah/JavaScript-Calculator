@@ -3,9 +3,8 @@ import PropTypes from "prop-types";
 const Display = ({ expression, result }) => {
   return (
     <div id="display">
-      <div>{expression}</div>
-      <div>{result}</div>
-    </div>
+    {result !== "" ? result : expression}
+  </div>
   );
 };
 

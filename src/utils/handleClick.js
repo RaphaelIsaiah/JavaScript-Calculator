@@ -1,4 +1,3 @@
-// import { evaluate } from "mathjs";
 import { evaluateExpression } from "./evaluateExpression";
 
 export const handleClick = (state, keyTrigger) => {
@@ -11,15 +10,12 @@ export const handleClick = (state, keyTrigger) => {
 
   // Handle digit and decimal input
   if (/[\d.]/.test(keyTrigger)) {
-    // If there's a previous evaluation result, start a new expression when a digit is pressed.
     if (result !== "") {
       return { expression: keyTrigger, result: "" };
     }
-    // Prevent leading zeros (except for decimals)
     if (expression === "0" && keyTrigger !== ".") {
       return { ...state, expression: keyTrigger };
     }
-    // Prevent multiple decimals in the current number segment
     const lastNumber = expression.split(/[+\-*/]/).pop();
     if (keyTrigger === "." && lastNumber.includes(".")) return state;
 
@@ -29,7 +25,13 @@ export const handleClick = (state, keyTrigger) => {
   // Handle evaluation
   if (keyTrigger === "=") {
     try {
-      const evalResult = evaluateExpression(expression);
+      // ** Fix: Normalize expression before evaluation **
+      let sanitizedExpression = expression
+        .replace(/([+*/])-([0-9])/g, "$1(-$2)") // Convert "*/-" into "*(-"
+        .replace(/--/g, "+") // Convert "--" to "+"
+        .replace(/([+\-*/]){2,}/g, (match) => match[match.length - 1]); // Keep only the last operator (except "-")
+
+      const evalResult = evaluateExpression(sanitizedExpression);
       return { expression, result: evalResult.toString() };
     } catch (error) {
       return { ...state, result: `Error: ${error}` };
@@ -38,23 +40,18 @@ export const handleClick = (state, keyTrigger) => {
 
   // Handle operator input (+, -, *, /)
   if (/[+\-*/]/.test(keyTrigger)) {
-    // If there is a previous result, start a new calculation using that result.
     if (result !== "") {
       return { expression: result + keyTrigger, result: "" };
     }
 
-    // Prevent multiple operators (excluding the negative sign "-")
+    // If multiple operators are entered, allow "-"; otherwise, keep only the last one.
     if (/[+\-*/]$/.test(expression)) {
-      // If last two characters are an operator followed by "-", allow negative numbers
-      if (/[+*/]-$/.test(expression) && keyTrigger !== "-") {
-        return {
-          ...state,
-          expression: expression.slice(0, -2) + keyTrigger, // Replace second-to-last operator
-        };
+      if (keyTrigger === "-" && expression[expression.length - 1] !== "-") {
+        return { ...state, expression: expression + keyTrigger };
       }
+      return { ...state, expression: expression.replace(/[+*/]+$/, "") + keyTrigger };
     }
 
-    // Otherwise, append the operator normally.
     return { ...state, expression: expression + keyTrigger };
   }
 

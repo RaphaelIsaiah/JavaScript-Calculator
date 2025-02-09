@@ -1,13 +1,12 @@
 import CalculatorBtns from "./CalculatorBtns";
 import Display from "./Display";
 import { buttonsPack } from "../utils/buttonsPack";
-// import { useState } from "react";
 import { useCalculator } from "../utils/useCalculator";
 
 const Calculator = () => {
   const { calculatorState, onButtonClick } = useCalculator();
 
-  const {expression, result} = calculatorState;
+  const { expression, result } = calculatorState;
 
   const btns = buttonsPack;
 

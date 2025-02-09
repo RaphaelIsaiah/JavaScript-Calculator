@@ -12,8 +12,8 @@ export const handleClick = (state, keyTrigger) => {
         expression: expression.toString(),
         result: evalResult.toString(),
       };
-    } catch {
-      return { ...state, result: "Error" };
+    } catch (error) {
+      return { ...state, result: `Error: ${error}` };
     }
   } else if (/[\d.]/.test(keyTrigger)) {
     // Prevent leading zeros
@@ -30,8 +30,10 @@ export const handleClick = (state, keyTrigger) => {
     // Prevent multiple operators (excluding negative sign)
     if (/[+\-*/]$/.test(expression) && keyTrigger !== "-") return state;
 
-    // Prevent invalid expressions like "*/" or "+-"
-    if (/[+\-*/]$/.test(expression) && /[+\-*/]/.test(keyTrigger)) return state;
+    // Replace consecutive operators with the last one entered (except for negative sign)
+    if (/[+\-*/]$/.test(expression)) {
+      return { ...state, expression: expression.slice(0, -1) + keyTrigger };
+    }
 
     return { ...state, expression: expression + keyTrigger };
   }

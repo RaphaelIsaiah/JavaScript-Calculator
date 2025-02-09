@@ -1,8 +1,10 @@
+import { evaluate } from "mathjs";
+
 export const evaluateExpression = (expression) => {
   try {
-    const result = eval(expression);
+    const result = evaluate(expression);
     return parseFloat(result.toFixed(4)); // Round to 4 decimal places
-  } catch {
-    return "Error";
+  } catch (error) {
+    return `Error: ${error}`;
   }
 };

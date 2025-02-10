@@ -2,9 +2,11 @@ import PropTypes from "prop-types";
 
 const Display = ({ expression, result }) => {
   return (
-    <div id="display">
-      <div>{expression}</div>
-      <div>{result}</div>
+    <div className="display-container">
+      <div className="expression">{expression}</div>
+      <div id="display" className="result">
+        {result !== "" ? result : expression}
+      </div>
     </div>
   );
 };

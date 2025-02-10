@@ -11,7 +11,7 @@ export const handleClick = (state, keyTrigger) => {
 
   // === Handle Delete Button (DEL) ===
   // When "DEL" is pressed, remove the last character of the expression.
-  if (keyTrigger === "DEL") {
+  if (keyTrigger === "D") {
     // If a result is currently displayed (from a previous evaluation),
     // pressing DEL resets the expression.
     if (result !== "") {

@@ -2,9 +2,9 @@ import PropTypes from "prop-types";
 
 const Display = ({ expression, result }) => {
   return (
-    <div className="display-container">
-      <div className="expression">{expression}</div>
-      <div id="display" className="result">
+    <div className="display-container bg-blue-950 rounded p-1 text-right">
+      <div className="bg-rose-700 rounded my-0.5 pr-4">{expression}</div>
+      <div id="display" className="bg-fuchsia-700 rounded my-0.5 pr-4">
         {result !== "" ? result : expression}
       </div>
     </div>

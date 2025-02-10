@@ -1,12 +1,32 @@
-.calculator {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  margin-top: 3rem;
+@import "tailwindcss";
+
+@theme {
+  --shadow-3xl: 0px 4px 8px 0px black;
+  --shadow-4xl: 0px 2px 4px 2px black;
 }
 
-.buttons {
-  display: flex;
+@media (max-width: 370px) {
+  .app {
+    padding: 0;
+  }
+
+  .calculator {
+    padding: 5px;
+    border-radius: 0;
+  }
+
+  .calc-btn,
+  .display-container {
+    font-size: smaller;
+  }
 }
+
+/* @media (max-width: 180px) {
+  body {
+    word-break: break-word;
+  }
+
+  .calc-btns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+} */

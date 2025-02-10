@@ -1,9 +1,13 @@
 import PropTypes from "prop-types";
 
-const CalculatorBtns = ({ keyTrigger, id }) => {
+const CalculatorBtns = ({ keyTrigger, id, handleClick }) => {
   return (
     <div>
-      <button value={keyTrigger} id={id}>
+      <button
+        value={keyTrigger}
+        id={id}
+        onClick={() => handleClick(keyTrigger)}
+      >
         {keyTrigger}
       </button>
     </div>
@@ -13,5 +17,6 @@ const CalculatorBtns = ({ keyTrigger, id }) => {
 CalculatorBtns.propTypes = {
   keyTrigger: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
+  handleClick: PropTypes.func.isRequired,
 };
 export default CalculatorBtns;

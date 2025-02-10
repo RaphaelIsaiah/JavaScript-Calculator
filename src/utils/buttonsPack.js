@@ -67,4 +67,8 @@ export const buttonsPack = [
     id: "clear",
     keyTrigger: "C",
   },
+  {
+    id: "delete",
+    keyTrigger: "DEL",
+  },
 ];

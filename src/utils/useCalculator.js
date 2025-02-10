@@ -39,7 +39,8 @@ export const useCalculator = () => {
 
       if (validKeys.includes(key)) {
         if (key === "Enter") onButtonClick("=");
-        else if (key === "Backspace" || key === "Delete") onButtonClick("C");
+        else if (key === "Backspace") onButtonClick("DEL"); // Backspace deletes last input
+        else if (key === "Delete") onButtonClick("C"); // Delete key clears everything
         else onButtonClick(key);
       }
     };

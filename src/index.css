@@ -3,8 +3,8 @@
 @theme {
   --shadow-3xl: 0px 4px 8px 0px black;
   --shadow-4xl: 0px 2px 4px 2px black;
-  --text-tiny: clamp(1.2rem, 4vw, 1.3rem);
-  --text-small: clamp(1.7rem, 4vw, 2.3rem);
+  --text-tiny: clamp(1rem, 4vw, 1.3rem);
+  --text-small: clamp(1.5rem, 4vw, 2.3rem);
 }
 
 @media (max-width: 370px) {
@@ -13,8 +13,17 @@
   }
 
   .calculator {
-    padding: 5px;
+    padding: 7px;
     border-radius: 0;
+  }
+
+  .calc-btns {
+    gap: 3px;
+  }
+
+  .calc-btn {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
 
   .calc-btn,

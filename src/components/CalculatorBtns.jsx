@@ -21,9 +21,9 @@ const CalculatorBtns = ({
           handleClick(keyTrigger);
           setTimeout(() => setActiveKey(""), 150); // Reset active state after 150ms
         }}
-        className={`calc-btn bg-fuchsia-700 py-7 w-full h-full rounded select-none outline-none cursor-pointer
-           hover:bg-fuchsia-800 transition-all duration-150 ease-in-out ${
-             isActive ? "bg-fuchsia-800 scale-97 shadow-4xl" : ""
+        className={`calc-btn font-extrabold py-7 w-full h-full rounded select-none outline-none cursor-pointer
+           hover:bg-bgd hover:text-black transition-all duration-150 ease-in-out ${
+             isActive ? "bg-bgd text-black scale-97 shadow-4xl" : ""
            } `}
       >
         {keyTrigger}

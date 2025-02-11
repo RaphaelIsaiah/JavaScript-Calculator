@@ -12,7 +12,7 @@ const Calculator = () => {
   const btns = buttonsPack;
 
   return (
-    <div className="calculator bg-cyan-800 w-full max-w-2xl min-h-3/4 p-2 rounded flex flex-col items-center justify-center gap-3 shadow-4xl">
+    <div className="calculator bg-pewter w-full max-w-2xl min-h-3/4 p-2 rounded flex flex-col items-center justify-center gap-3 shadow-4xl">
       {/* Display section */}
       <div className=" rounded w-full">
         <Display expression={expression} result={result} />

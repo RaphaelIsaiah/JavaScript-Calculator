@@ -6,6 +6,7 @@ export const useCalculator = () => {
     expression: "0",
     result: "",
   });
+  const [activeKey, setActiveKey] = useState("");
 
   const onButtonClick = useCallback((keyTrigger) => {
     setCalculatorState((prevState) => handleClick(prevState, keyTrigger));
@@ -14,7 +15,13 @@ export const useCalculator = () => {
   // Add keyboard support
   useEffect(() => {
     const handleKeyDown = (event) => {
-      const key = event.key;
+      let key = event.key;
+
+      // Map keys for consistency with button values
+      if (key === "Enter") key = "=";
+      if (key === "Backspace") key = "D";
+      if (key === "Delete") key = "C";
+
       const validKeys = [
         "0",
         "1",
@@ -32,22 +39,29 @@ export const useCalculator = () => {
         "*",
         "/",
         "=",
-        "Enter",
-        "Backspace",
-        "Delete",
+        "D",
+        "C",
       ];
 
       if (validKeys.includes(key)) {
-        if (key === "Enter") onButtonClick("=");
-        else if (key === "Backspace") onButtonClick("DEL"); // Backspace deletes last input
-        else if (key === "Delete") onButtonClick("C"); // Delete key clears everything
-        else onButtonClick(key);
+        setActiveKey(key);
+        onButtonClick(key);
       }
     };
 
+    const handleKeyUp = () => {
+      // Ensure smooth transition
+      setTimeout(() => setActiveKey(""), 150);
+    };
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
   }, [onButtonClick]);
 
-  return { calculatorState, onButtonClick };
+  return { calculatorState, onButtonClick, activeKey, setActiveKey };
 };

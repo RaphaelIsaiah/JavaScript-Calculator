@@ -1,69 +1,96 @@
 import { evaluateExpression } from "./evaluateExpression";
 
+// Helper: returns true if a token is one of our operators.
+function isOperator(token) {
+  return ["+", "-", "*", "/"].includes(token);
+}
+
 export const handleClick = (state, keyTrigger) => {
-  const { expression, result } = state;
+  let { expression, result } = state;
 
   // === Handle Clear Button (C) ===
-  // When "C" is pressed, reset the calculator to its initial state.
+  // Reset the calculator to its initial state.
   if (keyTrigger === "C") {
     return { expression: "0", result: "" };
   }
 
-  // === Handle Delete Button (DEL) ===
-  // When "DEL" is pressed, remove the last character of the expression.
-  if (keyTrigger === "DEL") {
-    // If a result is currently displayed (from a previous evaluation),
-    // pressing DEL resets the expression.
+  // === Handle Delete Button (D) ===
+  // "D" stands for DEL (delete last character).
+  if (keyTrigger === "D") {
+    // If a result is showing (after evaluation), reset everything.
     if (result !== "") {
       return { expression: "0", result: "" };
     }
-    // If the expression has only one character, resetting to "0" prevents empty expression.
-    if (expression.length === 1) {
+    // Tokenize the expression (tokens are separated by a space).
+    let tokens = expression.trim().split(" ");
+    // If there are no tokens, reset to "0"
+    if (tokens.length === 0) {
       return { ...state, expression: "0" };
     }
-    // Otherwise, remove the last character.
-    return { ...state, expression: expression.slice(0, -1) };
+    // Remove the last character from the last token.
+    let lastToken = tokens[tokens.length - 1];
+    lastToken = lastToken.slice(0, -1);
+    // If the last token becomes empty after deletion, remove it entirely.
+    if (lastToken === "") {
+      tokens.pop();
+    } else {
+      tokens[tokens.length - 1] = lastToken;
+    }
+    // Reassemble tokens with spaces (or reset to "0" if empty).
+    const newExpression = tokens.length > 0 ? tokens.join(" ") : "0";
+    return { ...state, expression: newExpression };
   }
 
   // === Handle Digit & Decimal Input ===
   if (/[\d.]/.test(keyTrigger)) {
-    // If a previous result is displayed, start a new expression with the new digit.
+    // If a previous result is showing, start a new expression with the digit.
     if (result !== "") {
       return { expression: keyTrigger, result: "" };
     }
-    // Replace the initial "0" if a non-decimal digit is pressed.
+    // If the current expression is just "0" (initial state) and the input isn’t a decimal,
+    // replace "0" with the digit.
     if (expression === "0" && keyTrigger !== ".") {
       return { ...state, expression: keyTrigger };
     }
-    // Split the expression by any operator to get the current number segment.
-    const lastNumber = expression.split(/[+\-*/]/).pop();
-    // Prevent entering more than one decimal point in the current number segment.
-    if (keyTrigger === "." && lastNumber.includes(".")) return state;
+    // Tokenize the expression (tokens will be numbers or operators).
+    let tokens = expression.trim().split(" ");
+    // Get the last token (the current number in progress or the last operator).
+    let lastToken = tokens[tokens.length - 1];
 
-    // Append the digit or decimal point to the expression.
-    return { ...state, expression: expression + keyTrigger };
+    // === Decimal Check ===
+    // If the key pressed is a decimal point, check if the current number already contains one.
+    if (keyTrigger === ".") {
+      // If the last token already includes a ".", ignore the input.
+      if (lastToken.includes(".")) {
+        return state;
+      }
+    }
+
+    // === Append the Digit or Decimal ===
+    // If the last token is a number (i.e. not an operator), append directly (no space).
+    if (!isOperator(lastToken)) {
+      tokens[tokens.length - 1] = lastToken + keyTrigger;
+    } else {
+      // If the last token is an operator, push a new token containing the digit.
+      tokens.push(keyTrigger);
+    }
+    return { ...state, expression: tokens.join(" ") };
   }
 
   // === Handle Evaluation ("=") ===
   if (keyTrigger === "=") {
     try {
-      // Before evaluation, sanitize the expression to ensure it can be correctly interpreted:
-      let sanitizedExpression = expression
-        // Example: convert cases like "* -5" into "*(-5)" so negative numbers work properly.
+      // Remove spaces to obtain the raw expression (so mathjs sees "555+662" instead of "555 + 662").
+      let rawExpression = expression.replace(/\s/g, "");
+      // Sanitize the raw expression (handle negatives, double negatives, extra operators).
+      let sanitizedExpression = rawExpression
         .replace(/([+*/])-([0-9])/g, "$1(-$2)")
-        // Replace double negatives "--" with a plus sign ("+").
         .replace(/--/g, "+")
-        // When multiple operators are entered consecutively, keep only the last one.
-        // (This handles cases like "5 + + 5" so that the extra "+" is removed.)
         .replace(/([+\-*/]){2,}/g, (match) => match[match.length - 1]);
-
-      // Evaluate the sanitized expression.
       const evalResult = evaluateExpression(sanitizedExpression);
-
-      // Return the result as a string, while preserving the original expression.
+      // Keep the spaced expression for display; store the evaluated result.
       return { expression, result: evalResult.toString() };
     } catch (error) {
-      // If evaluation fails, display an error message.
       return { ...state, result: `Error: ${error}` };
     }
   }
@@ -72,31 +99,27 @@ export const handleClick = (state, keyTrigger) => {
   if (/[+\-*/]/.test(keyTrigger)) {
     // If a previous result exists, start a new expression using that result.
     if (result !== "") {
-      return { expression: result + keyTrigger, result: "" };
+      return { expression: result + " " + keyTrigger, result: "" };
     }
-
-    // If the expression already ends with an operator...
-    if (/[+\-*/]$/.test(expression)) {
+    // Tokenize the expression.
+    let tokens = expression.trim().split(" ");
+    // If the last token is an operator:
+    if (tokens.length > 0 && isOperator(tokens[tokens.length - 1])) {
       // Special handling for "-" to allow negative numbers:
-      if (keyTrigger === "-") {
-        // If the expression does not already end with two or more "-" signs,
-        // allow one additional "-" (e.g., "5 * -" is valid).
-        if (!/[-]{2,}$/.test(expression)) {
-          return { ...state, expression: expression + keyTrigger };
-        }
+      // For example, if the user types "5 *" and then "-", we want tokens to become ["5", "*", "-"].
+      if (keyTrigger === "-" && tokens[tokens.length - 1] !== "-") {
+        tokens.push(keyTrigger);
+      } else {
+        // For other cases, replace the last operator token with the new operator.
+        tokens[tokens.length - 1] = keyTrigger;
       }
-      // For other operators (or if too many "-" are already present),
-      // remove all consecutive operators at the end and then append the new one.
-      return {
-        ...state,
-        expression: expression.replace(/[+*/-]+$/, "") + keyTrigger,
-      };
+    } else {
+      // If the last token is a number, add the operator as a new token.
+      tokens.push(keyTrigger);
     }
-
-    // Otherwise, simply append the operator to the expression.
-    return { ...state, expression: expression + keyTrigger };
+    return { ...state, expression: tokens.join(" ") };
   }
 
-  // If no condition is met, return the state unchanged.
+  // If no condition matches, return the state unchanged.
   return state;
 };

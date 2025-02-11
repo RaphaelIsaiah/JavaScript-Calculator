@@ -1,12 +1,39 @@
-.calculator {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  margin-top: 3rem;
+@import "tailwindcss";
+
+@theme {
+  --shadow-3xl: 0px 4px 8px 0px black;
+  --shadow-4xl: 0px 2px 4px 2px black;
+  --text-tiny: clamp(1rem, 4vw, 1.3rem);
+  --text-small: clamp(1.5rem, 4vw, 2.3rem);
+  --color-*: initial;
+  --color-brown: #5c4e4e;
+  --color-coffeePot: #988686;
+  --color-pewter: #d1d0d0;
+  --color-black: #000000;
+  --color-bgd: #aeadad;
 }
 
-.buttons {
-  display: flex;
+@media (max-width: 370px) {
+  .app {
+    padding: 0;
+  }
+
+  .calculator {
+    padding: 7px;
+    border-radius: 0;
+  }
+
+  .calc-btns {
+    gap: 3px;
+  }
+
+  .calc-btn {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .calc-btn,
+  .display-container {
+    font-size: smaller;
+  }
 }

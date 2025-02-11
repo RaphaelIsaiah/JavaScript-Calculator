@@ -9,7 +9,6 @@ export const buttonsPack = [
     keyTrigger: "D",
     className: "order-2 bg-black ",
   },
-
   {
     id: "nine",
     keyTrigger: "9",
@@ -78,7 +77,7 @@ export const buttonsPack = [
   {
     id: "divide",
     keyTrigger: "/",
-    className: "order-3 bg-coffeePot text-black",
+    className: "order-3 bg-coffeePot text-black text-2xl",
   },
   {
     id: "decimal",
